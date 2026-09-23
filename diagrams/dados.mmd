@@ -1,0 +1,77 @@
+erDiagram
+    FUNCIONARIO {
+        int id_pk PK
+        string cpf UK
+        string cargo
+        date inicio_contrato
+        string nome
+        string email UK
+        boolean ativo
+    }
+    
+    MOTORISTA {
+        int id_pk PK
+        int id_fk_funcionario FK
+        string cnh UK
+        string categoria
+        boolean ativo
+    }
+    
+    VEICULO {
+        int id_pk PK
+        string placa UK
+        string cidade_origem
+        string modelo
+        string cor
+        double kilometragem
+        double gasolina_tanque
+        boolean disponibilidade
+        boolean ativo
+    }
+    
+    VIAGEM {
+        int id_pk PK
+        string nome_origem
+        string nome_destino
+        double distancia
+        string descricao
+        string status
+        int id_fk_veiculo FK
+        int id_fk_motorista FK
+        double litros_gasolina
+        timestamp data_hora_saida
+        timestamp previsao_chegada
+        boolean ativo
+    }
+    
+    MANUTENCAO {
+        int id_pk PK
+        string tipo
+        int id_fk_veiculo FK
+        string status
+        date data_inicio
+        date previsao_termino
+        boolean ativo
+    }
+    
+    OCORRENCIA {
+        int id_pk PK
+        string descricao
+        int id_fk_viagem FK
+        boolean ativo
+    }
+    
+    LOG {
+        int id_pk PK
+        int id_fk_viagem FK
+        string status
+        timestamp data
+    }
+
+    %% Relacionamentos e Chaves Estrangeiras
+    FUNCIONARIO ||--o| MOTORISTA : "é um"
+    VEICULO ||--o{ VIAGEM : "realiza"
+    MOTORISTA ||--o{ VIAGEM : "conduz"
+    VEICULO ||--o{ MANUTENCAO : "passa por"
+    VIAGEM ||--o{ OCORRENCIA : "tem"
+    VIAGEM ||--o{ LOG : "registra"
