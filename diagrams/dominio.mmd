@@ -1,0 +1,62 @@
+classDiagram
+    direction TB
+
+    class Funcionario {
+        cpf
+        nome
+        cargo
+        status
+    }
+
+    class Motorista {
+        cnh
+        tipo_categoria
+    }
+
+    class Veiculo {
+        placa
+        modelo
+        marca
+        ano
+        quilometragem
+        gasolina
+        disponivel
+    }
+
+    class Viagem {
+        origem
+        destino
+        distancia
+        dataHoraSaida
+        previsaoChegada
+        descricao
+        status_situacao
+    }
+
+    class Manutencao {
+        tipo
+        dataInicio
+        previsaoTermino
+        observacoes
+    }
+
+    class Ocorrencia {
+        tipo
+        descricao
+    }
+
+    class HistoricoViagem {
+        status_situacao
+        dataHora
+    }
+
+    %% Relacionamentos e Multiplicidades
+    Funcionario <|-- Motorista : é um
+    
+    Viagem "0..*" --> "1" Motorista : aloca
+    Viagem "0..*" --> "1" Veiculo : utiliza
+    
+    Viagem "1" *-- "0..*" Ocorrencia : registra
+    Viagem "1" *-- "1..*" HistoricoViagem : possui
+    
+    Veiculo "1" *-- "0..*" Manutencao : passa por
