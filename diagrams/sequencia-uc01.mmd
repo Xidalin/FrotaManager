@@ -1,0 +1,33 @@
+sequenceDiagram
+    actor Gestor as Gestor de Frota
+    participant Tela as Tela de Agendamento
+    participant Sistema as Sistema de Frota
+    participant BD as Banco de Dados
+
+    Gestor->>Tela: Acessa a tela de agendamento
+    Tela-->>Gestor: Exibe formulário
+
+    Gestor->>Tela: Informa origem, destino, data/hora de saída e previsão de chegada
+    Gestor->>Tela: Confirma a alocação
+    Tela->>Sistema: Solicita agendamento da viagem
+
+    Sistema->>BD: Consulta conflitos de veículo e motorista no intervalo
+    BD-->>Sistema: Retorna viagens existentes
+
+    alt Existe conflito (RN-01)
+        Sistema-->>Tela: Recusa a alocação e informa o conflito
+        Tela-->>Gestor: Solicita alteração do recurso
+    else Não existe conflito
+        Sistema->>BD: Consulta manutenção do veículo no período
+        BD-->>Sistema: Retorna registros de manutenção
+
+        alt Veículo em manutenção (RN-02)
+            Sistema-->>Tela: Recusa a alocação e informa a manutenção
+            Tela-->>Gestor: Solicita seleção de outro veículo
+        else Veículo disponível
+            Sistema->>BD: Salva a viagem e os recursos vinculados
+            BD-->>Sistema: Confirma persistência
+            Sistema-->>Tela: Confirma o agendamento
+            Tela-->>Gestor: Exibe confirmação da viagem
+        end
+    end
