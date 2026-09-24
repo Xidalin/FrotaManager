@@ -40,8 +40,8 @@ As diretrizes de contribuição estão descritas no arquivo CONTRIBUTING.md.
 Este README representa a versão inicial do projeto, podendo sofrer alterações conforme o avanço das etapas de desenvolvimento e refinamento dos requisitos.
 
 # 👥 Participantes
-Guilherme da Silva Santos
-Paulo Henrique Maciel Siqueira
-Ricardo Rocha Alves
-Rickelme Figueira Sousa
-Tiago Abreu Marques
+1. Guilherme da Silva Santos
+2. Paulo Henrique Maciel Siqueira
+3. Ricardo Rocha Alves
+4. Rickelme Figueira Sousa
+5. Tiago Abreu Marques
