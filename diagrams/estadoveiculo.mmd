@@ -1,0 +1,15 @@
+stateDiagram-v2
+    [*] --> Disponivel : Cadastro (disponibilidade=true, ativo=true)
+    
+    Disponivel --> Em_Viagem : Alocado em Viagem
+    Em_Viagem --> Disponivel : Viagem Concluída/Cancelada
+    
+    Disponivel --> Em_Manutencao : Envio para Oficina
+    Em_Manutencao --> Disponivel : Manutenção Finalizada
+    
+    Em_Viagem --> Em_Manutencao : Ocorrência impeditiva na viagem
+    
+    Disponivel --> Inativo : Exclusão Lógica (ativo=false)
+    Em_Manutencao --> Inativo : Aposentadoria / Perda Total
+    
+    Inativo --> [*]
