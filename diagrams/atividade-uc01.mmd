@@ -1,0 +1,18 @@
+flowchart TD
+    A([Início]) --> B[Acessa a tela de agendamento]
+    B --> C[Informa origem, destino,<br/>data/hora de saída e previsão de chegada]
+    C --> D[Confirma a alocação]
+
+    D --> E{Há conflito de<br/>veículo ou motorista?<br/>RN-01}
+    
+    E -- Sim --> F[Informa conflito<br/>e solicita alteração]
+    F --> C
+
+    E -- Não --> G{Veículo está em manutenção?<br/>RN-02}
+    
+    G -- Sim --> H[Informa bloqueio<br/>e solicita outro veículo]
+    H --> C
+
+    G -- Não --> I[Salva viagem<br/>e recursos vinculados]
+    I --> J[Confirma o agendamento]
+    J --> K([Fim])
