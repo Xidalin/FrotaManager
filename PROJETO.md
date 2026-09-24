@@ -23,20 +23,5 @@ Diagrama em `diagrams/dados.mmd`.
 * **Tempo:** Utilização de `timestamp` para controle exato de horários nas viagens e logs, e `date` para início de contratos e manutenções, visando suportar a validação de conflitos de alocação (RN-01).
 * **Generalização:** A separação entre Funcionario e Motorista adota a estratégia de *uma tabela por subclasse*, evitando colunas nulas no banco e centralizando os dados comuns na tabela genérica.
 
-## Comportamento
-
-
-
-## Distribuição de responsabilidades
-
-
-
-## Decisões de projeto
-
-
-
-## Protótipo
-
-
 ## Histórico de revisão
 2026-09-23: Criação inicial do modelo de domínio e de dados.
