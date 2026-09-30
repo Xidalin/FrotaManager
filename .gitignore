@@ -1,0 +1,25 @@
+# Dependências e artefatos gerados
+node_modules/
+build/
+dist/
+coverage/
+*.log
+npm-debug.log*
+
+# Configuração local e segredos
+# O .env guarda credenciais (ex.: senha do MySQL) e NUNCA é versionado.
+# O .env.example, sem valores reais, deve ser versionado.
+.env
+.env.*
+!.env.example
+*.local
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores e IDEs
+.idea/
+.vscode/
+*.swp
