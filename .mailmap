@@ -1,0 +1,10 @@
+# Unifica as identidades de cada integrante no histórico do Git.
+# Formato: Nome Canônico <email-canonico> Nome Usado <email-usado>
+# Confira com: git shortlog -sne
+
+Guilherme da Silva Santos <guilhermeadasilvasantos@gmail.com> Guilherme Araújo <guilhermeadasilvasantos@gmail.com>
+Paulo Henrique Maciel Siqueira <maciel.paulo@mail.uft.edu.br> maciel-paulo <maciel.paulo@mail.uft.edu.br>
+Ricardo Rocha Alves <ricardo.rocha@uft.edu.br> Ricardo.Natiruts <ricardo.rocha@uft.edu.br>
+Ricardo Rocha Alves <ricardo.rocha@uft.edu.br> Ricardo Alves <ricardo.rochalves09@gmail.com>
+Rickelme Figueira Sousa <rickelme.figueira@mail.uft.edu.br> Rickelme Figueira Sousa <riquelmefigueirasousa@gmail.com>
+Tiago Abreu Marques <tiagomarqs09@gmail.com>
