@@ -1,12 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  experimental: {
-    agentFeedback: true,
-  },
-  cacheComponents: true,
-  partialPrefetching: true,
+  output: "export",
+  // Necessário com "export": desliga a otimização de imagens que exigiria servidor.
+  images: { unoptimized: true },
   turbopack: {
     rules: {
       "*.css": {
