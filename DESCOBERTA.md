@@ -108,7 +108,7 @@ Conforme a definição inicial, o MVP será composto pelas seguintes funcionalid
 
 ## Riscos iniciais
 ### **R1** 
-- **Risco:** Adaptação da equipe às tecnologias escolhidas para a stack (Backend em Node.js e Banco de Dados MySQL). 
+- **Risco:** Adaptação da equipe às tecnologias escolhidas para a stack (Backend em Node.js e banco de dados PostgreSQL com Prisma e TypeScript).
 - **Probabilidade:** média 
 - **Impacto:** alto 
 - **Resposta:** mitigar 

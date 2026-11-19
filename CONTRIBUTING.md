@@ -90,7 +90,7 @@ Discordar de uma decisão técnica é normal. Quando a discussão no PR não che
 
 - Dependências e artefatos gerados (`node_modules/`, `build/`, `dist/`).
 - Configuração local da máquina.
-- **Segredos**: senhas, tokens, chaves de API, credenciais do MySQL. Eles ficam no arquivo `.env`, que é ignorado pelo Git. O arquivo `.env.example`, **sem valores reais**, documenta quais variáveis existem.
+- **Segredos**: senhas, tokens, chaves de API e credenciais. Eles ficam no arquivo `.env`, que é ignorado pelo Git. O arquivo `.env.example`, **sem valores reais**, documenta quais variáveis existem.
 
 Se um segredo for enviado ao repositório por engano, **troque a credencial imediatamente** e avise a equipe. Apagar o arquivo em outro commit não resolve: ele continua no histórico.
 

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { once } from "node:events";
 import { PGlite } from "@electric-sql/pglite";
 import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
@@ -8,8 +8,15 @@ import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
 test("RF-01: cadastro, duplicidade, edição e inativação de veículos via HTTP", async t => {
   const db = await PGlite.create();
   t.after(() => db.close());
-  const sql = await readFile(new URL("../prisma/migrations/20261118_cadastro_veiculo/migration.sql", import.meta.url), "utf8");
-  await db.exec(sql);
+  const migrationsDir = new URL("../prisma/migrations/", import.meta.url);
+  const migrations = (await readdir(migrationsDir, { withFileTypes: true }))
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .sort();
+  for (const migration of migrations) {
+    const sql = await readFile(new URL(`${migration}/migration.sql`, migrationsDir), "utf8");
+    await db.exec(sql);
+  }
   const socket = new PGLiteSocketServer({ db, host: "127.0.0.1", port: 0 });
   await socket.start();
   t.after(() => socket.stop());
@@ -28,10 +35,14 @@ test("RF-01: cadastro, duplicidade, edição e inativação de veículos via HTT
   });
   const dados = { placa: "abc-1d23", modelo: "Uno", marca: "Fiat", ano: 2020, quilometragem: 100 };
   assert.equal((await enviar("POST", "", {})).status, 400);
+  assert.equal((await enviar("POST", "", { ...dados, placa: "XYZ1D23", modelo: "x".repeat(101) })).status, 400);
+  assert.equal((await enviar("POST", "", { ...dados, placa: "DEF1G23", quilometragem: 100000000 })).status, 400);
   const criado = await enviar("POST", "", dados);
   assert.equal(criado.status, 201);
   const veiculo = await criado.json();
   assert.equal(veiculo.placa, "ABC1D23");
+  assert.equal(veiculo.ano, 2020);
+  assert.equal(veiculo.quilometragem, 100);
   const caminho = "/" + veiculo.id;
   assert.equal((await enviar("POST", "", { ...dados, placa: veiculo.placa })).status, 409);
   assert.equal((await enviar("PATCH", caminho, { quilometragem: 120 })).status, 200);
