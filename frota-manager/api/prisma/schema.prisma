@@ -8,3 +8,15 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Veiculo {
+  id            Int     @id @default(autoincrement()) @map("id_pk")
+  placa         String  @unique @db.VarChar(7)
+  modelo        String
+  marca         String
+  ano           Int
+  quilometragem Float   @map("kilometragem")
+  ativo         Boolean @default(true)
+
+  @@map("veiculo")
+}
