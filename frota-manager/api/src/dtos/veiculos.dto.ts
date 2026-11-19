@@ -31,8 +31,8 @@ export function validarVeiculo(body: unknown, parcial: boolean): Partial<Cadastr
       }
       case "marca":
       case "modelo":
-        if (typeof valor !== "string" || !valor.trim())
-          throw new ErroApi(400, "Marca e modelo precisam conter texto.");
+        if (typeof valor !== "string" || !valor.trim() || valor.trim().length > 100)
+          throw new ErroApi(400, "Marca e modelo devem conter de 1 a 100 caracteres.");
         dados[campo] = valor.trim();
         break;
       case "ano":
@@ -41,7 +41,7 @@ export function validarVeiculo(body: unknown, parcial: boolean): Partial<Cadastr
         dados.ano = valor;
         break;
       case "quilometragem":
-        if (!Number.isFinite(valor) || valor < 0)
+        if (!Number.isFinite(valor) || valor < 0 || valor > 99999999.99)
           throw new ErroApi(400, "Quilometragem inválida.");
         dados.quilometragem = valor;
         break;

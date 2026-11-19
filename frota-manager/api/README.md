@@ -1,6 +1,6 @@
 # API de veículos do FrotaManager
 
-Implementa a parte de veículos do RF-01. O serviço escuta em 127.0.0.1 para desenvolvimento local. A autenticação dos perfis de gestor e motorista está pendente.
+Implementa o schema PostgreSQL do domínio da frota e a parte de veículos do RF-01. O serviço escuta em 127.0.0.1 para desenvolvimento local. A autenticação dos perfis de gestor e motorista está pendente.
 
 ## Verificar sem instalar um banco
 
@@ -13,16 +13,18 @@ npm run typecheck
 npm test
 ```
 
-O teste inicia um banco temporário PGlite, aplica a migração SQL da branch e exercita as rotas via HTTP.
+O teste inicia um banco temporário PGlite, aplica todas as migrações da branch e exercita as rotas via HTTP.
 
 ## Executar com PostgreSQL local
 
-A branch de origem configura PostgreSQL no Prisma. RE-01 especifica MySQL. Confirme com o responsável pelo banco qual provedor e esquema serão integrados antes de aplicar migrações em ambiente compartilhado. Para testar individualmente, crie um banco PostgreSQL vazio e exclusivo de desenvolvimento, copie `.env.example` para `.env` nesta pasta e ajuste `DATABASE_URL`. Depois da instalação e geração do cliente, rode:
+A equipe decidiu PostgreSQL com Prisma. Para testar individualmente, crie um banco PostgreSQL vazio e exclusivo de desenvolvimento, copie `.env.example` para `.env` nesta pasta e ajuste `DATABASE_URL`. Nunca use credenciais reais em `.env.example` nem aplique migrações em bancos compartilhados sem autorização. A geração do cliente e os testes automatizados não exigem conexão com o banco configurado em `.env`.
 
 ```sh
 npx prisma migrate deploy
 npm run dev
 ```
+
+As viagens têm índices por veículo/motorista, horário de saída e situação para apoiar consultas de disponibilidade e relatórios. A sobreposição de intervalos de viagens não é garantida por índices comuns; a RN-01 deve ser verificada pela camada de serviço/backend, dentro de uma transação.
 
 Base local: `http://127.0.0.1:3001`. O navegador pode consumir a API a partir de `http://localhost:3000` (ajustável por `FRONTEND_ORIGIN`).
 
