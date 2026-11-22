@@ -1,6 +1,4 @@
-export class ErroApi extends Error {
-  constructor(public status: number, mensagem: string) { super(mensagem); }
-}
+import { ErroApi } from "../errors/erroApi.js";
 
 export interface Cadastro {
   placa: string;

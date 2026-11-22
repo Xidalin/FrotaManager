@@ -1,6 +1,6 @@
 import express, { type ErrorRequestHandler } from "express";
 import cors from "cors";
-import { ErroApi } from "./dtos/veiculos.dto.js";
+import { ErroApi } from "./errors/erroApi.js";
 import { Prisma } from "./generated/prisma/client.js";
 import { rotasVeiculos } from "./routes/veiculos.routes.js";
 
