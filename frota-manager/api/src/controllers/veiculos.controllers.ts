@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
-import { ErroApi, validarVeiculo } from "../dtos/veiculos.dto.js";
+import { ErroApi} from "../errors/erroApi.js";
+import {validarVeiculo} from "../dtos/veiculos.dto.js"
 import * as veiculos from "../services/veiculos.services.js";
 
 function lerId(valor: unknown) {
