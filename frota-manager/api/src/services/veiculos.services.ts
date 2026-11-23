@@ -1,5 +1,13 @@
 import { prisma } from "../database/prisma.js";
-import { ErroApi, type Cadastro } from "../dtos/veiculos.dto.js";
+import { ErroApi } from "../errors/erroApi.js";
+
+type Cadastro = {
+  placa: string;
+  modelo: string;
+  marca: string;
+  ano: number;
+  quilometragem: number;
+};
 
 function paraResposta(veiculo: {
   id: number;
