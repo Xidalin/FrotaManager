@@ -1,16 +1,7 @@
 import type { RequestHandler } from "express";
-import { ErroApi } from "../errors/erroApi.js";
+import { lerId } from "../dtos/uuid.js";
 import { validarFuncionario } from "../dtos/funcionarios.dto.js";
 import * as funcionarios from "../services/funcionarios.services.js";
-
-function lerId(valor: unknown) {
-  if (
-    typeof valor !== "string" ||
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(valor)
-  )
-    throw new ErroApi(400, "ID inválido.");
-  return valor;
-}
 
 export const listar: RequestHandler = async (_req, res) => {
   res.json(await funcionarios.listar());
