@@ -5,6 +5,7 @@ import { Prisma } from "./generated/prisma/client.js";
 import { rotasVeiculos } from "./routes/veiculos.routes.js";
 import { rotasFuncionarios } from "./routes/funcionarios.routes.js";
 import { rotasMotoristas } from "./routes/motoristas.routes.js";
+import { rotasManutencoes } from "./routes/manutencoes.routes.js";
 
 export const app = express();
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN ?? "http://localhost:3000" }));
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use("/veiculos", rotasVeiculos);
 app.use("/funcionarios", rotasFuncionarios);
 app.use("/motoristas", rotasMotoristas);
+app.use("/manutencoes", rotasManutencoes);
 function mensagemDuplicidade(erro: Prisma.PrismaClientKnownRequestError, caminho: string) {
   const detalhe = `${JSON.stringify(erro.meta ?? "")} ${erro.message}`.toLowerCase();
   if (detalhe.includes("placa")) return "Placa já cadastrada.";
