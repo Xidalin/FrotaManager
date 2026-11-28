@@ -29,7 +29,7 @@ Relatório de uso e quilometragem por veículo
 
 Backend: Node.js
 Frontend: HTML, CSS, JavaScript
-Banco de Dados: MySQL
+Banco de Dados: PostgreSQL
 Versionamento: Git e GitHub
 🤝 Contribuição
 

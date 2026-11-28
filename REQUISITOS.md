@@ -103,7 +103,7 @@
 ## Restrições (RE) e Regras de Negócio (RN)
 
 ### Restrições (RE)
-- **RE-01:** O backend deve ser desenvolvido utilizando **Node.js** e o banco de dados relational **MySQL**. [Origem: Risco R1]
+- **RE-01:** O backend deve ser desenvolvido utilizando **Node.js** e banco de dados relacional **PostgreSQL**, com Prisma e TypeScript. [Decisão técnica da equipe]
 - **RE-02:** O frontend deve ser construído em **HTML, CSS e JavaScript** padrão (Web Responsivo), sem o desenvolvimento de aplicativos nativos (iOS/Android) nesta fase. [Origem: Fora de Escopo]
 - **RE-03:** O sistema não possuirá rastreamento GPS em tempo real nem rotinas de cálculo financeiro/contábil nesta versão. [Origem: Fora de Escopo]
 

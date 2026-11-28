@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum StatusVeiculo {
+  DISPONIVEL
+  EM_VIAGEM
+  EM_MANUTENCAO
+  INATIVO
+}
+
+enum StatusMotorista {
+  ATIVO
+  INATIVO
+}
+
+enum StatusViagem {
+  AGENDADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum TipoManutencao {
+  PREVENTIVA
+  CORRETIVA
+}
+
+enum StatusManutencao {
+  AGENDADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+model Funcionario {
+  id             String     @id @default(uuid()) @db.Uuid
+  nome           String     @db.VarChar(150)
+  cpf            String     @unique @db.VarChar(11)
+  cargo          String     @db.VarChar(80)
+  email          String?    @unique @db.VarChar(254)
+  inicioContrato DateTime   @map("inicio_contrato") @db.Date
+  ativo          Boolean    @default(true)
+  criadoEm       DateTime   @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm   DateTime   @default(now()) @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  motorista      Motorista?
+
+  @@map("funcionarios")
+}
+
+model Motorista {
+  id            String          @id @default(uuid()) @db.Uuid
+  funcionarioId String          @unique @map("funcionario_id") @db.Uuid
+  cnh           String          @unique @db.VarChar(11)
+  categoriaCnh  String          @map("categoria_cnh") @db.VarChar(3)
+  status        StatusMotorista @default(ATIVO)
+  ativo         Boolean         @default(true)
+  criadoEm      DateTime        @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm  DateTime        @default(now()) @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  funcionario   Funcionario     @relation(fields: [funcionarioId], references: [id], onDelete: Restrict)
+  viagens       Viagem[]
+
+  @@map("motoristas")
+}
+
+model Veiculo {
+  id            Int           @id @default(autoincrement()) @map("id_pk")
+  placa         String        @unique @db.VarChar(7)
+  modelo        String        @db.VarChar(100)
+  marca         String        @db.VarChar(100)
+  anoFabricacao Int           @map("ano_fabricacao")
+  odometroAtual Decimal       @map("odometro_atual") @db.Decimal(10, 2)
+  status        StatusVeiculo @default(DISPONIVEL)
+  ativo         Boolean       @default(true)
+  criadoEm      DateTime      @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm  DateTime      @default(now()) @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  viagens       Viagem[]
+  manutencoes   Manutencao[]
+
+  @@index([status, ativo])
+  @@map("veiculos")
+}
+
+model Viagem {
+  id              String            @id @default(uuid()) @db.Uuid
+  veiculoId       Int               @map("veiculo_id")
+  motoristaId     String            @map("motorista_id") @db.Uuid
+  origem          String            @db.VarChar(200)
+  destino         String            @db.VarChar(200)
+  dataSaida       DateTime          @map("data_saida") @db.Timestamptz(3)
+  previsaoChegada DateTime          @map("previsao_chegada") @db.Timestamptz(3)
+  chegadaReal     DateTime?         @map("chegada_real") @db.Timestamptz(3)
+  odometroSaida   Decimal?          @map("odometro_saida") @db.Decimal(10, 2)
+  odometroChegada Decimal?          @map("odometro_chegada") @db.Decimal(10, 2)
+  status          StatusViagem      @default(AGENDADA)
+  ativo           Boolean           @default(true)
+  criadoEm        DateTime          @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm    DateTime          @default(now()) @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  veiculo         Veiculo           @relation(fields: [veiculoId], references: [id], onDelete: Restrict)
+  motorista       Motorista         @relation(fields: [motoristaId], references: [id], onDelete: Restrict)
+  ocorrencias     Ocorrencia[]
+  historico       HistoricoViagem[]
+
+  @@index([veiculoId, dataSaida, previsaoChegada])
+  @@index([motoristaId, dataSaida, previsaoChegada])
+  @@index([status, dataSaida])
+  @@map("viagens")
+}
+
+model Manutencao {
+  id              String           @id @default(uuid()) @db.Uuid
+  veiculoId       Int              @map("veiculo_id")
+  tipo            TipoManutencao
+  status          StatusManutencao @default(AGENDADA)
+  dataInicio      DateTime         @map("data_inicio") @db.Timestamptz(3)
+  previsaoTermino DateTime         @map("previsao_termino") @db.Timestamptz(3)
+  concluidaEm     DateTime?        @map("concluida_em") @db.Timestamptz(3)
+  observacoes     String?          @db.Text
+  ativo           Boolean          @default(true)
+  criadoEm        DateTime         @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm    DateTime         @default(now()) @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  veiculo         Veiculo          @relation(fields: [veiculoId], references: [id], onDelete: Restrict)
+
+  @@index([veiculoId, status, dataInicio, previsaoTermino])
+  @@map("manutencoes")
+}
+
+model Ocorrencia {
+  id        String   @id @default(uuid()) @db.Uuid
+  viagemId  String   @map("viagem_id") @db.Uuid
+  tipo      String   @db.VarChar(60)
+  descricao String   @db.Text
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  viagem    Viagem   @relation(fields: [viagemId], references: [id], onDelete: Restrict)
+
+  @@index([viagemId, criadoEm])
+  @@map("ocorrencias")
+}
+
+model HistoricoViagem {
+  id       String   @id @default(uuid()) @db.Uuid
+  viagemId String   @map("viagem_id") @db.Uuid
+  evento   String   @db.VarChar(60)
+  dados    Json?    @db.JsonB
+  ativo    Boolean  @default(true)
+  criadoEm DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  viagem   Viagem   @relation(fields: [viagemId], references: [id], onDelete: Restrict)
+
+  @@index([viagemId, criadoEm])
+  @@map("historico_viagem")
+}

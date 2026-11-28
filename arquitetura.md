@@ -8,7 +8,7 @@ O **FrotaManager** adota uma arquitetura cliente-servidor em três camadas (Apre
 
 * **Frontend Web Responsivo:** Interface única adaptável para desktop (visão gerencial do Gestor da Frota) e dispositivos móveis (visão operacional do Motorista).
 * **Backend (API REST):** Centraliza as regras de negócio de alocação, manutenção, ocorrências e consolidação de relatórios.
-* **Banco de Dados Relacional (MySQL):** Garante a persistência transacional, integridade referencial e auditoria histórica da frota.
+* **Banco de Dados Relacional (PostgreSQL):** Garante a persistência transacional, integridade referencial e auditoria histórica da frota.
 
 ## Responsabilidades
 
@@ -16,7 +16,7 @@ O **FrotaManager** adota uma arquitetura cliente-servidor em três camadas (Apre
 |---|---|---|
 | Frontend | Apresentação visual, estado da interface e dados da sessão do usuário | Renderiza telas (Dashboard, Despacho, Manutenções, Relatórios e visão Mobile do Motorista), realiza verificações de apoio nos formulários e consome a API REST. |
 | Backend | Regras do domínio (`RN-01` a `RN-04`), políticas de permissão por perfil e contratos da API | Valida conflitos de agendamento e bloqueios por manutenção, impede regressão de odômetro, consolida relatórios operacionais, registra logs (`HistoricoViagem`) e responde às requisições HTTP. |
-| Banco | Esquema relacional (`MySQL`), restrições de unicidade, chaves estrangeiras e índices | Armazena e recupera dados de veículos, motoristas, viagens, manutenções e ocorrências, preserva histórico via apagamento lógico (`ativo = true`) e executa consultas agregadas otimizadas. |
+| Banco | Esquema relacional (`PostgreSQL`), restrições de unicidade, chaves estrangeiras e índices | Armazena e recupera dados de veículos, motoristas, viagens, manutenções e ocorrências, preserva histórico via apagamento lógico (`ativo = true`) e executa consultas agregadas otimizadas. |
 
 ## Onde cada parte roda
 
@@ -24,7 +24,7 @@ Diagrama em `diagrams/implantacao.mmd`.
 
 * **Nó Cliente (Navegador Web):** Executa o Frontend no computador do Gestor da Frota (operações administrativas e relatórios) e no smartphone do Motorista (consulta de viagens e reporte rápido de ocorrências via navegador mobile).
 * **Nó Servidor de Aplicação:** Hospeda os arquivos estáticos do Frontend e o serviço de Backend (API REST) responsável pelo processamento das regras de negócio.
-* **Nó Servidor de Banco de Dados:** Hospeda a instância **MySQL** dedicada ao armazenamento persistente e execução das consultas relacionais do sistema.
+* **Nó Servidor de Banco de Dados:** Hospeda a instância **PostgreSQL** dedicada ao armazenamento persistente e execução das consultas relacionais do sistema.
 
 ## Contrato da API
 
@@ -51,7 +51,7 @@ Principais recursos expostos pelo Backend para atender ao backlog do **FrotaMana
 
 | Qualidade | Requisito | Decisão | Custo aceito |
 |---|---|---|---|
-| Desempenho | `RNF-02`: Gerar relatórios consolidados em menos de 1,5s para bases com até 10.000 viagens | Criação de índices compostos em `Viagem` (`veiculo_id`, `data_saida`, `status`) e agregação direta via SQL no MySQL | Maior consumo de espaço em disco e leve sobrecarga nas operações de escrita (`INSERT`/`UPDATE`). |
+| Desempenho | `RNF-02`: Gerar relatórios consolidados em menos de 1,5s para bases com até 10.000 viagens | Criação de índices compostos em `Viagem` (`veiculo_id`, `data_hora_saida`, `status_situacao`) e agregação direta via SQL no PostgreSQL | Maior consumo de espaço em disco e leve sobrecarga nas operações de escrita (`INSERT`/`UPDATE`). |
 | Usabilidade Mobile | `RNF-03`: Permitir que o motorista reporte uma ocorrência em no máximo 3 toques no celular | Adoção de Frontend Web Responsivo (*mobile-first*) com atalho direto no card da viagem ativa, dispensando aplicativo nativo | Necessidade de manter e testar layouts adaptáveis para diferentes resoluções dentro da mesma base de código web. |
 | Manutenibilidade | Isolar regras críticas de disponibilidade sujeitas a evolução (`RN-01`, `RN-02`) | Encapsulamento da verificação de conflitos e bloqueios em uma camada de serviço dedicada no Backend (critério de Parnas) | Camada extra de indireção entre os controladores HTTP e o acesso ao banco de dados. |
 | Auditabilidade | Preservar histórico legal de viagens, ocorrências e evolução do odômetro (`RN-03`) | Apagamento lógico (`ativo = false`) em todas as tabelas e registro de auditoria na tabela `HistoricoViagem` | Obrigatoriedade de incluir o filtro `WHERE ativo = true` em todas as consultas padrão e crescimento contínuo da base. |
@@ -61,7 +61,7 @@ Principais recursos expostos pelo Backend para atender ao backlog do **FrotaMana
 | Id | Decisão | Motivo | Consequência aceita | Situação |
 |---|---|---|---|---|
 | D-01 | Validar conflitos de alocação (`RN-01`) e manutenção (`RN-02`) em módulo de serviço dedicado no Backend | Isolar regras de negócio críticas em um único ponto, facilitando manutenção e testes | Uma indireção a mais entre a rota/controlador e a camada de persistência | Aceita |
-| D-02 | Implementar apagamento lógico (`ativo = false`) em todas as tabelas do MySQL | Preservar histórico operacional, logs de odômetro e comprovantes de viagens | Exige filtro `WHERE ativo = true` nas consultas de registros ativos | Aceita |
+| D-02 | Implementar apagamento lógico (`ativo = false`) em todas as tabelas do PostgreSQL | Preservar histórico operacional, logs de odômetro e comprovantes de viagens | Exige filtro `WHERE ativo = true` nas consultas de registros ativos | Aceita |
 | D-03 | Bloquear estritamente qualquer regressão de odômetro no Backend (`RN-03`) | Garantir confiabilidade nos relatórios consolidados (`RF-03`) e evitar adulterações | Correções de erro de digitação exigem procedimento administrativo específico | Aceita |
 | D-04 | Estruturar `Funcionario` e `Motorista` no banco usando tabela por subclasse | Evitar colunas nulas e permitir extensão futura para outros perfis (ex.: Gestor, Mecânico) | Exige junção (`JOIN`) para recuperar dados cadastrais completos do motorista | Aceita |
 | D-05 | Adotar API RESTful desacoplada consumida por Frontend Web Responsivo | Atender tanto o Gestor (desktop) quanto o Motorista (celular) sobre o mesmo núcleo de domínio | Exige configuração de CORS, serialização JSON e tratamento de estados de rede no cliente | Aceita |
